@@ -21,9 +21,9 @@
 **Tradeoff acknowledged:** The cost is a privacy surprise: a user might add a film expecting it to be a private "to-do" list and not realize it's visible to others until told otherwise. This is mitigated by the fact that public is a per-entry field the user can control, but it does mean the safe default (private) is not the one we ship — we're prioritizing feature usefulness/social engagement over privacy-by-default here, which is worth flagging explicitly rather than leaving as an implicit inherited default.
 
 ## Comment 5 — Sort order
-**My position:**
-**Reasoning:**
-**Engagement with reviewer's point:**
+**My position:** Sort by `date_added` descending (newest first), matching your preference.
+**Reasoning:** I agree with your reasoning — a watchlist is inherently a "what do I want to watch next" list, and recency is the signal users care about most: what did I just add, what am I excited about right now. Alphabetical sort is more useful for browsing a large, static catalog (like the films list), not for a personal, growing list a user is actively curating. This also makes the watchlist consistent with get_collection, which already sorts by date_added descending — so the two features behave the same way from a user's perspective.
+**Engagement with reviewer's point:** The one case where alphabetical could matter is if a user's watchlist grows very large and they want to find one specific film quickly — but that's better solved with search/filtering than with the default sort order, and it doesn't outweigh the recency-first behavior most users expect when they open their watchlist. Going with `date_added desc` as the default, no changes needed to your reasoning.
 
 ## Comment 6 — Rebase
 **What conflicted:**
