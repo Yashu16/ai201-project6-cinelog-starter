@@ -12,8 +12,8 @@
 **How I verified:** Manually verified with a script exercising `add_to_watchlist` twice with the same `user_id/film_id`: the first call created the entry successfully, the second call raised `AlreadyInWatchlistError` as expected, confirming no duplicate WatchlistEntry rows are created.
 
 ## Comment 3 — Missing test
-**What I did:**
-**How I verified:**
+**What I did:** Created `tests/test_watchlist.py`, following the fixture and assertion structure from `tests/test_collection.py`. Added `test_add_to_watchlist_nonexistent_film_raises`, the equivalent of `test_add_to_collection_nonexistent_film_raises`, which asserts that calling `add_to_watchlist` with a film_id that doesn't exist raises `FilmNotFoundError`.
+**How I verified:** Ran `pytest tests/test_watchlist.py -v` and confirmed the test passes.
 
 ## Comment 4 — Default visibility
 **My position:**
