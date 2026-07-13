@@ -1,7 +1,7 @@
 # PR Response Doc — CineLog Watchlist Feature
 
 ## AI Usage
-
+**Instance 1**: AI has helped me understand all files and the functions that resides in them. I have also used it to make sure my commit formats are accurate to the format given in `CONTRIBUTING.md` file.
 
 ## Comment 1 — Rename
 **What I did:** I changed save_to_watchlist to add_to_watchlist
@@ -34,4 +34,30 @@
 ![Commits Screenshot](image.png)
 
 ## PR Description
-<!-- Written at the end — feature overview, design decisions, manual testing steps -->
+
+### What this does
+
+Adds a watchlist feature to CineLog, letting users save films they want to watch later (separate from their collection of films they've already watched). Users can add a film to their watchlist, view their watchlist, and each entry tracks when it was added and whether it's publicly visible.
+
+### Design decisions
+
+- **Default visibility**: New watchlist entries default to `public=True`. CineLog is a community-driven app built around sharing and discovery, so a visible-by-default watchlist lets other users see what you're planning to watch without you having to opt in first. See Comment 4 above for the full tradeoff discussion (privacy surprise vs. social engagement).
+- **Sort order**: `get_watchlist` returns entries sorted by `date_added` descending (most recently added first), matching the pattern already used by `get_collection`. This prioritizes recency over alphabetical browsing, since a watchlist is a personal, actively-curated "what's next" list rather than a static catalog. See Comment 5 above for full reasoning.
+
+### How to manually test
+
+1. Start the app: `python app.py`
+2. Create a user and a film in the database (e.g. via the Flask shell or existing seed data).
+3. Add a film to the watchlist:
+   ```
+   POST /watchlist/<user_id>/add
+   Body: { "film_id": "<film-uuid>" }
+   ```
+   Expect a `201` response with the new entry.
+4. Try adding the same film again — expect an error (`AlreadyInWatchlistError`), not a duplicate entry.
+5. View the watchlist:
+   ```
+   GET /watchlist/<user_id>
+   ```
+   Expect a list of films, most recently added first, each including `date_added` and `public`.
+6. Try adding a film_id that doesn't exist — expect a `FilmNotFoundError`, not a server crash.
