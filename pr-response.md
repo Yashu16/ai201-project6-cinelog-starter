@@ -30,5 +30,8 @@
 **How I resolved it:** Manually added `WatchlistEntry` back to `models.py`, using `db.String(36)` for `film_id` (matching the UUID type used by `Film.id` and `CollectionEntry.film_id` post-refactor), instead of the original `db.Integer`. I also updated stale documentation that still described `film_id` as an integer: the docstring in `add_to_watchlist` (`services/watchlist_service.py`) and the request body comment in `routes/watchlist/watchlist.py`, and updated the test's fake ID from an integer to a UUID-shaped string to match.
 **How I verified no conflict remains:** Ran `git log --merges` on the rebased branch — my own commits introduce no merge commits (the branch history is linear). Confirmed the app boots cleanly with `python -c "from app import create_app; create_app()"`. Ran the full test suite (`pytest tests/ -v`) — all 5 tests pass, including the new UUID-based nonexistent-film test for the watchlist.
 
+**Screenshot**
+![Commits Screenshot](image.png)
+
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
