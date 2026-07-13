@@ -26,9 +26,9 @@
 **Engagement with reviewer's point:** The one case where alphabetical could matter is if a user's watchlist grows very large and they want to find one specific film quickly — but that's better solved with search/filtering than with the default sort order, and it doesn't outweigh the recency-first behavior most users expect when they open their watchlist. Going with `date_added desc` as the default, no changes needed to your reasoning.
 
 ## Comment 6 — Rebase
-**What conflicted:**
-**How I resolved it:**
-**How I verified no conflict remains:**
+**What conflicted:** Ran `git fetch origin` and `git rebase origin/main` as instructed. Interestingly, no explicit merge-conflict markers appeared in models.py or services/watchlist_service.py during the rebase — the only textual conflict was in .gitignore. However, inspecting the rebased result, I found `WatchlistEntry` was missing from `models.py` entirely. Tracing the history, the commit that added `services/watchlist_service.py` and the watchlist routes never touched `models.py` — `WatchlistEntry` only ever existed in the original branch tip's working state, not as part of any committed diff to `models.py`. So when rebasing onto `main` (post-UUID-refactor), git had nothing to merge against and silently carried forward `main`'s version of `models.py`, which never defined `WatchlistEntry` at all — the mismatch was a structural gap rather than a true two-sided conflict, so it never surfaced as conflict markers.
+**How I resolved it:** Manually added `WatchlistEntry` back to `models.py`, using `db.String(36)` for `film_id` (matching the UUID type used by `Film.id` and `CollectionEntry.film_id` post-refactor), instead of the original `db.Integer`. I also updated stale documentation that still described `film_id` as an integer: the docstring in `add_to_watchlist` (`services/watchlist_service.py`) and the request body comment in `routes/watchlist/watchlist.py`, and updated the test's fake ID from an integer to a UUID-shaped string to match.
+**How I verified no conflict remains:** Ran `git log --merges` on the rebased branch — my own commits introduce no merge commits (the branch history is linear). Confirmed the app boots cleanly with `python -c "from app import create_app; create_app()"`. Ran the full test suite (`pytest tests/ -v`) — all 5 tests pass, including the new UUID-based nonexistent-film test for the watchlist.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
